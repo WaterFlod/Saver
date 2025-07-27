@@ -1,0 +1,18 @@
+[project]
+name = "expenses-tracker"
+version = "1.0.0"
+description = "It will help you track your expenses. This is my pet-project to test my skills."
+authors = [
+    {name = "Shestakov Matvey",email = "mse25019@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "tabulate (>=0.9.0,<0.10.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
