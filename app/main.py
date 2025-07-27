@@ -1,6 +1,11 @@
+from fastapi import FastAPI
+
 from datetime import *
 from tabulate import *
 import csv
+
+
+app = FastAPI()
 
 
 data = [["ID", "Дата", "Описание", "Сумма"]] #Замена БД
