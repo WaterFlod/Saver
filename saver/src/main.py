@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 import uvicorn
+
+from .schemas import Expense
 
 from datetime import *
 from tabulate import *
@@ -11,6 +13,21 @@ app = FastAPI()
 
 
 data = [["ID", "Дата", "Описание", "Сумма"]] #Замена БД
+db = {
+    0: {"id": 0, "amount": 110, "description": "Cola"},
+}
+
+@app.get("/expenses/{expense_id}", response_model=Expense)
+def get_expense(expense_id: int):
+    if expense_id in db:
+        expense = db[expense_id]
+        return expense
+    raise HTTPException(status_code=404, detail="Expense not found")
+
+@app.post("/expenses", response_model=Expense)
+def create_expense(data:Expense):
+    db[data.id] = data
+    return data
 
 
 def main():
@@ -107,5 +124,4 @@ def main():
             print('Воспользуйтесь командой "Помощь" для ознакомления с командами.')
 
 if __name__ == "__main__":
-    main()
     uvicorn.run("main:app", reload=True)
