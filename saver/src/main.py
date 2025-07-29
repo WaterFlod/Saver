@@ -2,16 +2,12 @@ from fastapi import FastAPI
 
 import uvicorn
 
-from .routers import user 
+from routers import router_user 
 
 app = FastAPI()
 
-app.include_router(user)
-
-db = {
-    0: {"id": 0, "amount": 110, "description": "Cola"},
-}
+app.include_router(router_user)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app", reload=True, log_level="info", host="0.0.0.0")

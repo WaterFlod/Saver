@@ -1,0 +1,9 @@
+version: "1"
+
+services:
+  app:
+    build: src/
+    container_name: app_container
+    ports:
+      - '8000:8000'
+    

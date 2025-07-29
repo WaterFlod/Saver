@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
 
-from main import db
+from schemas import Expense
 
-from .schemas import Expense
+router_user = APIRouter()
 
-user = APIRouter("/")
+db = {
+    0: {"id": 0, "amount": 110, "description": "Cola"},
+}
 
-
-@user.get("/expenses/{expense_id}", response_model=Expense)
+@router_user.get("/expenses/{expense_id}", response_model=Expense)
 def get_expense(expense_id: int):
     if expense_id in db:
         expense = db[expense_id]
@@ -15,12 +16,12 @@ def get_expense(expense_id: int):
     raise HTTPException(status_code=404, detail="Expense not found")
 
 
-@user.get("/expenses", response_model=Expense)
+@router_user.get("/expenses", response_model=Expense)
 def get_all_expenses():
     return db
 
 
-@user.post("/expenses", response_model=Expense)
+@router_user.post("/expenses", response_model=Expense)
 def create_expense(data:Expense):
     db[data.id] = data
     return data
