@@ -5,3 +5,6 @@ class Expense(BaseModel):
     amount: int
     description: str
     pass
+
+class ExpenseDTO(Expense):
+    pass
