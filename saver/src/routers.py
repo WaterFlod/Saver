@@ -11,15 +11,12 @@ router_user = APIRouter()
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
-db = {
-    0: {"id": 0, "amount": 110, "description": "Cola"},
-}
 
 @router_user.get("/expenses/{expense_id}", response_model=Expense)
 async def read_expense(session: SessionDep, expense_id: int):
     expenses = await get_expenses(session)
     for expense in expenses:
-        if expense.id == id:
+        if expense.id == expense_id:
             return expenses
     raise HTTPException(status_code=404, detail="Expense not found")
 
