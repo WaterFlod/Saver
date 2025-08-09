@@ -3,7 +3,7 @@ from typing import Annotated
 
 from database import Base
 
-intpk = Annotated[int, mapped_column(primary_key=True)]
+intpk = Annotated[int, mapped_column(primary_key=True), mapped_column(index=True)]
 
 
 class ExpenseModel(Base):
