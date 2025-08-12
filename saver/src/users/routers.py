@@ -6,9 +6,9 @@ from typing import Annotated
 import uuid
 
 from database import get_session
-from schemas import Expense
+from saver.src.users.schemas import Expense
 from models import ExpenseModel
-from schemas import ExpenseDTO
+from saver.src.users.schemas import ExpenseDTO
 
 router_user = APIRouter()
 
