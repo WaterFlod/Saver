@@ -1,2 +1,2 @@
 
-Saver - application (so far a regular API) that will help you save your money. In order to deploy the application, add .env the file from DB settings (DB_PORT, DB_USER, DB_PASS, DB_NAME) to the Saver folder. Then run the docker-compose file in the same folder.
+Saver - application (so far a regular API) that will help you save your money. In order to deploy the application, add .env the file from DB settings (DB_PORT, DB_USER, DB_PASS, DB_NAME) and auth settings (SECRET_KEY, ALGORITHM) to the Saver folder. Then run the docker-compose file in the same folder.
