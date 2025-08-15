@@ -3,12 +3,11 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Annotated
-import uuid
 
 from database import get_session
-from saver.src.users.schemas import Expense
+from users.schemas import Expense
 from models import ExpenseModel
-from saver.src.users.schemas import ExpenseDTO
+from users.schemas import ExpenseDTO
 
 router_user = APIRouter()
 
