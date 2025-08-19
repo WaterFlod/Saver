@@ -1,28 +1,22 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from typing import Annotated
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_session
 from users.schemas import Expense
 from models import ExpenseModel
 from users.schemas import ExpenseDTO
+from users.dao import ExpenseDAO
 
 router_user = APIRouter()
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
-async def get_expenses(session) -> list: #return all appointments in DB
-    result = await session.execute(select(ExpenseModel))
-    expenses = result.scalars().all()
-    return expenses
-
-
 @router_user.get("/expenses/{expense_id}", response_model=Expense)
-async def read_expense(session: SessionDep, expense_id: int):
-    expenses = await get_expenses(session)
+async def read_expense(expense_id: int):
+    expenses = await ExpenseDAO.find_all_expenses()
     result_dto = [ExpenseDTO.model_validate(row, from_attributes=True) for row in expenses]
     for expense in result_dto:
         if expense.id == expense_id:
@@ -30,13 +24,9 @@ async def read_expense(session: SessionDep, expense_id: int):
     raise HTTPException(status_code=404, detail="Expense not found")
 
 
-@router_user.get("/expenses", response_model=Expense)
-async def read_all_expenses(session:SessionDep):
-    expenses = await get_expenses(session)
-    json = {}
-    for expense in expenses:
-        json[expense.id] = [expense.amount, expense.description]
-    return JSONResponse(content=json, status_code=200)
+@router_user.get("/expenses", summary="Получить все расходы",response_model=Expense)
+async def get_all_expenses():
+    return await ExpenseDAO.find_all_expenses()
 
 @router_user.post("/expenses", response_model=Expense)
 async def create_expense(session: SessionDep, data:Expense):
