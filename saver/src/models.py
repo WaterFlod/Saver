@@ -11,6 +11,8 @@ str_unq = Annotated[str, mapped_column(unique=True)]
 class UserModel(Base):
     __tablename__ = "user"
     
+    __table_args__ = {'extend_existing': True}
+    
     id: Mapped[int_pk]
     first_name: Mapped[str]
     last_name: Mapped[str]
@@ -24,11 +26,10 @@ class UserModel(Base):
     is_super_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
     
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id})"
-
 class ExpenseModel(Base):
     __tablename__ = "expense"
+    
+    __table_args__ = {'extend_existing': True}
     
     id: Mapped[int_pk]
     amount: Mapped[int]

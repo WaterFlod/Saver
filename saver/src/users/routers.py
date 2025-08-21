@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
+import json
 
 from database import get_session
 from users.schemas import Expense
@@ -27,6 +28,7 @@ async def read_expense(expense_id: int):
 @router_user.get("/expenses", summary="Получить все расходы",response_model=Expense)
 async def get_all_expenses():
     return await ExpenseDAO.find_all_expenses()
+
 
 @router_user.post("/expenses", response_model=Expense)
 async def create_expense(session: SessionDep, data:Expense):

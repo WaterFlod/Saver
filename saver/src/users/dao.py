@@ -1,3 +1,6 @@
+import sys 
+sys.path.append("/saver")
+
 from sqlalchemy import select
 
 from src.models import ExpenseModel
