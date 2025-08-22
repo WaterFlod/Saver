@@ -15,7 +15,11 @@ class ExpenseDAO:
             return expenses.scalars().all()
         
     @classmethod
-    async def create_expense(cls, expense) -> list:
+    async def create_expense(cls, expense) -> None:
         async with async_session_maker() as session:
-            session.add(expense)
-            await session.commit()
+            try:
+                session.add(expense)
+            except:
+                await session.rollback()
+            else:                
+                await session.commit()

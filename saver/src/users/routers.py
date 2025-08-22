@@ -1,9 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from typing import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_session
 from users.schemas import Expense
 from models import ExpenseModel
 from users.schemas import ExpenseDTO
@@ -11,7 +8,7 @@ from users.dao import ExpenseDAO
 
 router_user = APIRouter()
 
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
 
 
 @router_user.get("/expenses/{expense_id}", response_model=Expense)
@@ -29,11 +26,15 @@ async def get_all_expenses():
     return await ExpenseDAO.find_all_expenses()
 
 
-@router_user.post("/expenses", response_model=Expense)
-async def add_expense(session: SessionDep, data:Expense):
+@router_user.post("/expenses")
+async def add_expense(data:Expense):
     new_expense = ExpenseModel(
         amount = data.amount,
         description = data.description,
     )
-    ExpenseDAO.create_expense(new_expense)
-    return JSONResponse(content={"detail": "Expense added successfully"}, status_code=200)
+    try:
+        ExpenseDAO.create_expense(new_expense)
+    except Exception as e:
+        raise HTTPException(status_code=501, detail=e)
+    else:
+        return JSONResponse(content={"detail": "Expense added successfully"}, status_code=200)
