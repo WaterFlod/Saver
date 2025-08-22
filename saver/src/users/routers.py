@@ -25,7 +25,7 @@ async def read_expense(expense_id: int):
     raise HTTPException(status_code=404, detail="Expense not found")
 
 
-@router_user.get("/expenses", summary="Получить все расходы",response_model=Expense)
+@router_user.get("/expenses", summary="Получить все расходы")
 async def get_all_expenses():
     return await ExpenseDAO.find_all_expenses()
 
