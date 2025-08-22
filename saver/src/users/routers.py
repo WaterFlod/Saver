@@ -38,3 +38,8 @@ async def add_expense(data:Expense):
         raise HTTPException(status_code=501, detail=e)
     else:
         return JSONResponse(content={"detail": "Expense added successfully"}, status_code=200)
+
+
+@router_user.delete("/expenses", summary="Удалить расход")
+async def remove_expense(id: int):
+    pass

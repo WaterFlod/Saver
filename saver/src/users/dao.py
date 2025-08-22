@@ -1,7 +1,7 @@
 import sys 
 sys.path.append("/saver")
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from src.models import ExpenseModel
 from src.database import async_session_maker
@@ -19,7 +19,16 @@ class ExpenseDAO:
         async with async_session_maker() as session:
             try:
                 session.add(expense)
-            except:
+            except Exception:
                 await session.rollback()
+                raise Exception
             else:                
                 await session.commit()
+    
+    @classmethod
+    async def delete_expense(cls, id: int):
+        async with async_session_maker() as session:
+            delete_expense = (delete(ExpenseModel).where(ExpenseModel.id == id))
+            await session.execute(delete_expense)
+            await session.commit()   
+            
