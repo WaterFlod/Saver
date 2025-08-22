@@ -13,3 +13,9 @@ class ExpenseDAO:
             query = select(ExpenseModel)
             expenses = await session.execute(query)
             return expenses.scalars().all()
+        
+    @classmethod
+    async def create_expense(cls, expense) -> list:
+        async with async_session_maker() as session:
+            session.add(expense)
+            await session.commit()

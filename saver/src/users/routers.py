@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-import json
 
 from database import get_session
 from users.schemas import Expense
@@ -31,11 +30,10 @@ async def get_all_expenses():
 
 
 @router_user.post("/expenses", response_model=Expense)
-async def create_expense(session: SessionDep, data:Expense):
+async def add_expense(session: SessionDep, data:Expense):
     new_expense = ExpenseModel(
         amount = data.amount,
         description = data.description,
     )
-    session.add(new_expense)
-    await session.commit()
+    ExpenseDAO.create_expense(new_expense)
     return JSONResponse(content={"detail": "Expense added successfully"}, status_code=200)
