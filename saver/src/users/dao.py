@@ -8,6 +8,12 @@ from src.database import connection
 
             
 class ExpenseDAO:
+    @classmethod
+    @connection
+    async def find_expense_by_id(cls, id, session) -> list: #return all appointments in DB
+        query = select(ExpenseModel).where(ExpenseModel.id == id)
+        expenses = await session.execute(query)
+        return expenses.scalars().one()
     
     @classmethod
     @connection
@@ -32,7 +38,7 @@ class ExpenseDAO:
     @classmethod
     @connection
     async def delete_expense(cls, id: int, session):
-        delete_expense = (delete(ExpenseModel).where(ExpenseModel.id == id))
-        await session.execute(delete_expense)
+        query = delete(ExpenseModel).where(ExpenseModel.id == id)
+        await session.execute(query)
         await session.commit()   
             

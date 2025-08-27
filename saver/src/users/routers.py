@@ -11,12 +11,13 @@ router_user = APIRouter()
 
 @router_user.get("/expenses/{expense_id}", response_model=Expense)
 async def read_expense(expense_id: int):
-    expenses = await ExpenseDAO.find_all_expenses()
-    result_dto = [ExpenseDTO.model_validate(row, from_attributes=True) for row in expenses]
-    for expense in result_dto:
-        if expense.id == expense_id:
-            return expense
-    raise HTTPException(status_code=404, detail="Expense not found")
+    try:
+        expense = await ExpenseDAO.find_expense_by_id(expense_id)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    else:
+        return expense
+    
 
 
 @router_user.get("/expenses", summary="Получить все расходы")
