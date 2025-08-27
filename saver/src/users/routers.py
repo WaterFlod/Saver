@@ -9,8 +9,6 @@ from users.dao import ExpenseDAO
 router_user = APIRouter()
 
 
-
-
 @router_user.get("/expenses/{expense_id}", response_model=Expense)
 async def read_expense(expense_id: int):
     expenses = await ExpenseDAO.find_all_expenses()
@@ -33,7 +31,7 @@ async def add_expense(data:Expense):
         description = data.description,
     )
     try:
-        ExpenseDAO.create_expense(new_expense)
+        await ExpenseDAO.create_expense(new_expense)
     except Exception as e:
         raise HTTPException(status_code=501, detail=e)
     else:

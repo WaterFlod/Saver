@@ -12,7 +12,7 @@ engine = create_async_engine(
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
-
+        
 def connection(method):
     async def wrapper(*args, **kwargs):
         async with async_session_maker() as session:
@@ -23,6 +23,7 @@ def connection(method):
                 raise e
                 
     return wrapper
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True

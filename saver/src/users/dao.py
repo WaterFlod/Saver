@@ -4,31 +4,35 @@ sys.path.append("/saver")
 from sqlalchemy import select, delete
 
 from src.models import ExpenseModel
-from src.database import async_session_maker
+from src.database import connection
 
+            
 class ExpenseDAO:
-    @classmethod
-    async def find_all_expenses(cls) -> list: #return all appointments in DB
-        async with async_session_maker() as session:
-            query = select(ExpenseModel)
-            expenses = await session.execute(query)
-            return expenses.scalars().all()
-        
-    @classmethod
-    async def create_expense(cls, expense) -> None:
-        async with async_session_maker() as session:
-            try:
-                session.add(expense)
-            except Exception:
-                await session.rollback()
-                raise Exception
-            else:                
-                await session.commit()
     
     @classmethod
-    async def delete_expense(cls, id: int):
-        async with async_session_maker() as session:
-            delete_expense = (delete(ExpenseModel).where(ExpenseModel.id == id))
-            await session.execute(delete_expense)
-            await session.commit()   
+    @connection
+    async def find_all_expenses(cls, session) -> list: #return all appointments in DB
+        query = select(ExpenseModel)
+        expenses = await session.execute(query)
+        return expenses.scalars().all()    
+    
+    
+    @classmethod
+    @connection
+    async def create_expense(cls, expense, session) -> None:
+        try:
+            session.add(expense)
+        except Exception as e:
+            await session.rollback()
+            raise e
+        else:                
+            await session.commit()
+    
+    
+    @classmethod
+    @connection
+    async def delete_expense(cls, id: int, session):
+        delete_expense = (delete(ExpenseModel).where(ExpenseModel.id == id))
+        await session.execute(delete_expense)
+        await session.commit()   
             
