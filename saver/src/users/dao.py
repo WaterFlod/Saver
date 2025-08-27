@@ -1,7 +1,7 @@
 import sys 
 sys.path.append("/saver")
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 
 from src.models import ExpenseModel
 from src.database import connection
@@ -40,5 +40,14 @@ class ExpenseDAO:
     async def delete_expense(cls, id: int, session):
         query = delete(ExpenseModel).where(ExpenseModel.id == id)
         await session.execute(query)
-        await session.commit()   
+        await session.commit()  
+    
+    
+    @classmethod
+    @connection
+    async def update_expense(cls, id: int, session, new_amount: int = None, new_description: str = None):
+        query = update(ExpenseModel).where(ExpenseModel.id == id).values(amount = new_amount, description = new_description)
+        await session.execute(query)
+        await session.commit()
+         
             

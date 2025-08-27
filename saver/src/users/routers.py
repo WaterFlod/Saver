@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 
 from users.schemas import Expense
 from models import ExpenseModel
-from users.schemas import ExpenseDTO
 from users.dao import ExpenseDAO
 
 router_user = APIRouter()
@@ -47,4 +46,15 @@ async def remove_expense(id: int):
         raise HTTPException(status_code=404, detail="Expense not found")
     else:
         return JSONResponse(content={"detail":"Expense deleted successfully"}, status_code=200)
+
+
+@router_user.update("/expenses", summary="Update expense by id")
+async def update_expense(id: int, new_amount: int = None, new_description: str = None):
+    try:
+        await ExpenseDAO.update_expense(id, new_amount=new_amount, new_description=new_description)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    else:
+        return JSONResponse(content={"detail":"Expense update successfully"}, status_code=200)
+    
     
