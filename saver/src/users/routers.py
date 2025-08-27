@@ -9,7 +9,7 @@ from users.dao import ExpenseDAO
 router_user = APIRouter()
 
 
-@router_user.get("/expenses/{expense_id}", response_model=Expense)
+@router_user.get("/expenses/{expense_id}", response_model=Expense, summary="Get expense by id")
 async def read_expense(expense_id: int):
     try:
         expense = await ExpenseDAO.find_expense_by_id(expense_id)
@@ -20,12 +20,12 @@ async def read_expense(expense_id: int):
     
 
 
-@router_user.get("/expenses", summary="Получить все расходы")
+@router_user.get("/expenses", summary="Get all expenses")
 async def get_all_expenses():
     return await ExpenseDAO.find_all_expenses()
 
 
-@router_user.post("/expenses")
+@router_user.post("/expenses", summary="Add expense")
 async def add_expense(data:Expense):
     new_expense = ExpenseModel(
         amount = data.amount,
@@ -39,6 +39,12 @@ async def add_expense(data:Expense):
         return JSONResponse(content={"detail": "Expense added successfully"}, status_code=200)
 
 
-@router_user.delete("/expenses", summary="Удалить расход")
+@router_user.delete("/expenses", summary="Delete expense by id")
 async def remove_expense(id: int):
-    pass
+    try:
+        await ExpenseDAO.delete_expense(id)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    else:
+        return JSONResponse(content={"detail":"Expense deleted successfully"}, status_code=200)
+    
