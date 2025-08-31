@@ -46,7 +46,12 @@ class ExpenseDAO:
     @classmethod
     @connection
     async def update_expense(cls, id: int, session, new_amount: int = None, new_description: str = None):
-        query = update(ExpenseModel).where(ExpenseModel.id == id).values(amount = new_amount, description = new_description)
+        if new_amount and new_description:
+            query = update(ExpenseModel).where(ExpenseModel.id == id).values(amount = new_amount, description = new_description)
+        elif new_amount:
+            query = update(ExpenseModel).where(ExpenseModel.id == id).values(amount = new_amount)
+        elif new_description:
+            query = update(ExpenseModel).where(ExpenseModel.id == id).values(description = new_description)    
         await session.execute(query)
         await session.commit()
          
