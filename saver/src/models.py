@@ -2,10 +2,11 @@ from sqlalchemy import text, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from datetime import datetime
+from typing import Annotated
 
 from database import Base
 
-str_null = mapped_column(String, nullable=False)
+str_null = Annotated[str, mapped_column(nullable=False)]
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -24,9 +25,9 @@ class Base(AsyncAttrs, DeclarativeBase):
 class UserModel(Base):
     __table_args__ = {'extend_existing': True}
     
-    username: Mapped[str] = str_null
+    username: Mapped[str_null]
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
-    password: Mapped[str] = str_null
+    password: Mapped[str_null]
     
     is_user: Mapped[bool] = mapped_column(default=True, server_default=text('true'), nullable=False)
     is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
