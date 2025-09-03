@@ -1,5 +1,4 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from config import settings
 
@@ -26,6 +25,3 @@ def connection(method):
                 
     return wrapper
 
-
-class Base(AsyncAttrs, DeclarativeBase):
-    __abstract__ = True
