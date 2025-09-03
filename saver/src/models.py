@@ -24,8 +24,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 class UserModel(Base):
     __table_args__ = {'extend_existing': True}
     
-    first_name: Mapped[str] = str_null
-    last_name: Mapped[str] = str_null
+    username: Mapped[str] = str_null
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     password: Mapped[str] = str_null
     
