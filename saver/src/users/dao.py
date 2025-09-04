@@ -3,21 +3,34 @@ sys.path.append("/saver")
 
 from sqlalchemy import select, delete, update
 
-from src.models import ExpenseModel
+from src.models import ExpenseModel, UserModel
 from src.database import connection
+
+
+class UserDAO:
+    @classmethod
+    @connection
+    async def find_one_or_none(cls, email: str, session):
+        try:
+            query = select(UserModel).where(UserModel.email == email)
+            user = await session.execute(query)
+        except Exception:
+            return None
+        else:
+            return user.scalars().one()
 
             
 class ExpenseDAO:
     @classmethod
     @connection
-    async def find_expense_by_id(cls, id, session) -> list: #return all appointments in DB
+    async def find_expense_by_id(cls, id, session) -> list: 
         query = select(ExpenseModel).where(ExpenseModel.id == id)
         expenses = await session.execute(query)
         return expenses.scalars().one()
     
     @classmethod
     @connection
-    async def find_all_expenses(cls, session) -> list: #return all appointments in DB
+    async def find_all_expenses(cls, session) -> list:
         query = select(ExpenseModel)
         expenses = await session.execute(query)
         return expenses.scalars().all()    
