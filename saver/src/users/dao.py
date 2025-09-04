@@ -1,7 +1,9 @@
 import sys 
 sys.path.append("/saver")
 
+from fastapi import HTTPException, status
 from sqlalchemy import select, delete, update
+from pydantic import EmailStr
 
 from src.models import ExpenseModel, UserModel
 from src.database import connection
@@ -10,14 +12,16 @@ from src.database import connection
 class UserDAO:
     @classmethod
     @connection
-    async def find_one_or_none(cls, email: str, session):
-        try:
+    async def find_one_or_none(cls, email: EmailStr | None, id: int | None,  session):
+        if email:
             query = select(UserModel).where(UserModel.email == email)
             user = await session.execute(query)
-        except Exception:
-            return None
-        else:
-            return user.scalars().one()
+        
+        if id:
+            query = select(UserModel).where(UserModel.id == id)
+            user = await session.execute(query)
+            
+        return user.scalars().one()
 
             
 class ExpenseDAO:
