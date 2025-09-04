@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 
-from users.schemas import ExpenseSchema, UserRegisterSchema
+from users.schemas import ExpenseSchema, UserRegisterSchema, UserAuthSchema
 from models import ExpenseModel
 from users.dao import ExpenseDAO, UserDAO
-from users.auth import get_hash_password
+from users.auth import get_hash_password, authenticate_user, create_access_token
 
 router_auth = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -23,7 +23,17 @@ async def register_user(user_data:UserRegisterSchema):
     user_dict["password"] = get_hash_password(user_data.password)
     await UserDAO.add(**user_dict)
     return JSONResponse(status_code=status.HTTP_200_OK, content="You have successfully registered")
-    pass
+
+
+@router_auth.post("/login")
+async def auth_user(response:Response, user_data:UserAuthSchema):
+    check = await authenticate_user(email=user_data.email, password=user_data.password)
+    if check is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Incorrect email or password")
+    access_token = create_access_token({"sub": str(check.id)})
+    response.set_cookie(key="users_access_token", value=access_token, httponly=True)
+    return {"access_token": access_token, "refresh_token": None}
 
 
 @router_user.get("/expenses/{expense_id}", response_model=ExpenseSchema, summary="Get expense by id")
