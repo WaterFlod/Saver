@@ -32,8 +32,14 @@ async def auth_user(response:Response, user_data:UserAuthSchema):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Incorrect email or password")
     access_token = create_access_token({"sub": str(check.id)})
-    response.set_cookie(key="users_access_token", value=access_token, httponly=True)
+    response.set_cookie(key="user_access_token", value=access_token, httponly=True)
     return {"access_token": access_token, "refresh_token": None}
+
+
+@router_auth.post("/logout")
+async def logout_user(response:Response):
+    response.delete_cookie(key="user_access_token")
+    return {"message": "The user has successfully logged out"}
 
 
 @router_user.get("/expenses/{expense_id}", response_model=ExpenseSchema, summary="Get expense by id")
@@ -45,7 +51,6 @@ async def read_expense(expense_id: int):
     else:
         return expense
     
-
 
 @router_user.get("/expenses", summary="Get all expenses")
 async def get_all_expenses():
