@@ -2,12 +2,15 @@ from fastapi import FastAPI
 import uvicorn
 import asyncio
 
-from users.routers import router_user 
-from database import Base, engine
+from users.routers import router_user, router_auth 
+from database import engine
+from models import Base
 
 app = FastAPI()
 
 app.include_router(router_user)
+
+app.include_router(router_auth)
 
 
 async def init_models():

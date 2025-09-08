@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, status, Depends
 from fastapi.responses import JSONResponse
 
 from users.schemas import ExpenseSchema, UserRegisterSchema, UserAuthSchema
@@ -8,7 +8,7 @@ from users.auth import get_hash_password, authenticate_user, create_access_token
 
 router_auth = APIRouter(prefix="/auth", tags=["Auth"])
 
-router_user = APIRouter()
+router_user = APIRouter(prefix="/", tags=["CRUD operations"])
 
 
 @router_auth.post("/register")
@@ -81,7 +81,7 @@ async def remove_expense(id: int):
         return JSONResponse(content={"detail":"Expense deleted successfully"}, status_code=200)
 
 
-@router_user.update("/expenses", summary="Update expense by id")
+@router_user.put("/expenses", summary="Update expense by id")
 async def update_expense(id: int, new_amount: int = None, new_description: str = None):
     try:
         await ExpenseDAO.update_expense(id, new_amount=new_amount, new_description=new_description)

@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 from datetime import datetime
 from typing import Annotated
 
-from database import Base
 
 str_null = Annotated[str, mapped_column(nullable=False)]
 
