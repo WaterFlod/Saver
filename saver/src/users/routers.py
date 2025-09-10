@@ -2,13 +2,14 @@ from fastapi import APIRouter, HTTPException, Response, status, Depends
 from fastapi.responses import JSONResponse
 
 from users.schemas import ExpenseSchema, UserRegisterSchema, UserAuthSchema
-from models import ExpenseModel
+from models import ExpenseModel, UserModel
 from users.dao import ExpenseDAO, UserDAO
-from users.auth import get_hash_password, authenticate_user, create_access_token
+from users.auth import get_hash_password, authenticate_user, create_access_token, get_current_user
+
 
 router_auth = APIRouter(prefix="/auth", tags=["Auth"])
 
-router_user = APIRouter(prefix="/", tags=["CRUD operations"])
+router_user = APIRouter(tags=["CRUD operations"])
 
 
 @router_auth.post("/register")
@@ -19,9 +20,12 @@ async def register_user(user_data:UserRegisterSchema):
             status_code=status.HTTP_409_CONFLICT,
             detail="The user is already registered"
         )
-    user_dict = user_data.dict()
-    user_dict["password"] = get_hash_password(user_data.password)
-    await UserDAO.add(**user_dict)
+    new_user = UserModel(
+        username = user_data.username,
+        email = user_data.email,
+        password = get_hash_password(user_data.password)
+    )
+    await UserDAO.add(new_user)
     return JSONResponse(status_code=status.HTTP_200_OK, content="You have successfully registered")
 
 
@@ -42,6 +46,16 @@ async def logout_user(response:Response):
     return {"message": "The user has successfully logged out"}
 
 
+@router_user.get("/info", summary="Get user info")
+async def get_user_info(user_data: UserModel = Depends(get_current_user)):
+    user = {
+        "username": user_data.username,
+        "email": user_data.email,
+        "password": user_data.password
+        }
+    return user
+
+
 @router_user.get("/expenses/{expense_id}", response_model=ExpenseSchema, summary="Get expense by id")
 async def read_expense(expense_id: int):
     try:
@@ -50,7 +64,7 @@ async def read_expense(expense_id: int):
         raise HTTPException(status_code=404, detail="Expense not found")
     else:
         return expense
-    
+
 
 @router_user.get("/expenses", summary="Get all expenses")
 async def get_all_expenses():
