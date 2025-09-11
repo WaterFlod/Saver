@@ -1,4 +1,4 @@
-from sqlalchemy import text, Integer, String, func
+from sqlalchemy import text, func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from datetime import datetime
@@ -28,14 +28,16 @@ class UserModel(Base):
     username: Mapped[str_null]
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str_null]
+    count_expenses: Mapped[int] = mapped_column(server_default=text('0'), nullable=False)
     
-    is_user: Mapped[bool] = mapped_column(default=True, server_default=text('true'), nullable=False)
-    is_admin: Mapped[bool] = mapped_column(default=False, server_default=text('false'), nullable=False)
+    is_user: Mapped[bool] = mapped_column(server_default=text('true'), nullable=False)
+    is_admin: Mapped[bool] = mapped_column(server_default=text('false'), nullable=False)
     
 
 class ExpenseModel(Base):
     __table_args__ = {'extend_existing': True}
     
-    #user_id: Mapped[int] = mapped_column(foreing_key=UserModel.id)
+    expense_id: Mapped[int] = mapped_column(nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     amount: Mapped[int] = mapped_column(nullable=False)
     description: Mapped[str]
